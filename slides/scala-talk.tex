@@ -39,32 +39,91 @@ col, set,start,end,deltat,zip},
 
 \begin{document}
 
-\title{Parallelisation strategies for Monte Carlo algorithms}
-\author[Darren Wilkinson --- BIRS, Banff, Canada, 6/3/14]{\textbf{\large Darren Wilkinson} \\
+\title[Scala --- RSS language shoot-out]{Scala as a platform for statistical computing and data science}
+\author[Darren Wilkinson --- RSS, London, 21/11/14]{\textbf{\large Darren Wilkinson} \\
 \alert{\url{http://tinyurl.com/darrenjw}}\\
 School of Mathematics \& Statistics\\Newcastle University, UK}
-\date{BIRS Workshop on Scalable Bayesian Computation,\\BIRS, Banff, Canada, 6th March 2014}
+\date{Statistical computing languages\\RSS, London, 21st November 2014}
 
 \frame{\titlepage}
 
+\section{Introduction}
+
+\subsection{Outline}
 
 \frame{
-\frametitle{Outline}
+\frametitle{Talk outline}
 \begin{itemize}
-\item Monte Carlo
-\item PRNG and PPRNG
-\item MCMC (parallel chains and parallelised single chains)
-\item Case study: SV Models
-\item ABC (and ABC-SMC)
-\item Parallel particle filtering and pMCMC
-\item Hybrid algorithms
+\item Background: Scala, Java and the JVM
 \item Functional programming, immutable data structures and parallelisation
+\item Parallel particle filtering
 \item Summary
 \end{itemize}
-\vspace{1ex}
-
 }
 
+\frame{
+\frametitle{Scala}
+\centerline{\includegraphics[width=\textwidth]{scala-website}}
+\mbox{}\\
+\bigskip
+\alert{\url{http://www.scala-lang.org/}}
+}
+
+\frame{
+\frametitle{History and background}
+\begin{itemize}
+\item history, userbase, relation to java, the jvm, etc.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Using scala}
+\begin{itemize}
+\item installation, free, open source, platform independence, "packages"
+\end{itemize}
+}
+
+\frame{
+\frametitle{IDEs}
+\begin{itemize}
+\item IDEs and "reproducible research"
+\end{itemize}
+}
+
+\frame{
+\frametitle{Data structures and parallellism}
+\begin{itemize}
+\item blah
+\end{itemize}
+}
+
+\frame{
+\frametitle{Example: linear regression}
+\begin{itemize}
+\item blah
+\end{itemize}
+}
+
+\frame{
+\frametitle{Example: Monte Carlo}
+\begin{itemize}
+\item blah
+\end{itemize}
+}
+
+\frame{
+\frametitle{blah}
+\begin{itemize}
+\item blah
+\end{itemize}
+}
+
+\frame{
+\frametitle{blah}
+\begin{itemize}
+\item blah
+\end{itemize}
+}
 
 \section{Functional programming}
 
@@ -153,7 +212,7 @@ Monoids, functors, applicatives and monads provide the mathematical structure wh
 \item \alert{Storm} --- streaming analytics library (from Twitter)
 \item \alert{Scalaz} --- category theory types (functors, monads, etc.)
 \item \alert{Breeze} --- scientific and numerical library (including nonuniform random number generation and numerical linear algebra)
-\item \alert{Saddle} --- data library
+\item \alert{Saddle} --- data library (data frames, etc.)
 \end{itemize}}
 Large ecosystem of software libraries and developers using Scala in the big data space...
 }
@@ -179,44 +238,19 @@ statisticians should perhaps look to functional languages and concurrency models
 \end{itemize}
 }
 
-\subsection{References}
+\subsection{Links and further reading}
 
 \frame{
-\frametitle{References}
-\begin{thebibliography}{}
-\scriptsize
-
-\bibitem{WY02}
-Wilkinson, D. J. \& Yeung, S. K. H. (2002)
-    \alert{\href{http://dx.doi.org/10.1023/A:1020711129064}{Conditional simulation from highly structured Gaussian systems, with application to blocking-MCMC for the Bayesian analysis of very large linear models}}, \emph{Statistics and Computing}, \textbf{12}(3): 287-300.
-
-\bibitem{WY04}
-Wilkinson, D. J. \& Yeung, S. K. H. (2004)
-    \alert{\href{http://dx.doi.org/10.1016/S0167-9473(02)00252-9}{A sparse matrix approach to Bayesian computation in large linear models}}, \emph{Computational Statistics and Data Analysis}, \textbf{44}(3):493-516.
-
-%\bibitem{Bro06}
-%Brockwell, A. E. (2006) Parallel Processing in Markov chain Monte Carlo Simulation by Pre-Fetching,
-%\emph{Journal of Computational and Graphical Statistics}, \textbf{15}(1):246--261.
-
-%\bibitem{WW04}
-%Whiley, M. \& Wilson, S. P. (2004) Parallel algorithms for Markov chain Monte Carlo methods in
-% latent spatial Gaussian models. \emph{Statistics and Computing},
-%\textbf{14}(3):171--179.
-
-\bibitem{Wil05}
-Wilkinson, D. J. (2005)
-\alert{\href{http://darrenjw.wordpress.com/2010/12/14/getting-started-with-parallel-mcmc/}{Parallel Bayesian Computation}}, Chapter 16 in E. J. Kontoghiorghes (ed.) Handbook of Parallel Computing and Statistics, Marcel Dekker/CRC Press, 481-512.
-\end{thebibliography}
-\vspace{1.5ex}
-
-\textbf{Blog: \alert{\url{http://darrenjw.wordpress.com/}}}
-\small
-
+\frametitle{Links and further reading}
 \begin{itemize}
-\item \href{http://darrenjw.wordpress.com/2010/12/14/getting-started-with-parallel-mcmc/}{Getting started with parallel MCMC}
-\item \href{http://darrenjw.wordpress.com/2011/03/09/parallel-monte-carlo-with-an-intel-i7-quad-core/}{Parallel Monte Carlo with an Intel i7 Quad Core}
-\item \href{http://darrenjw.wordpress.com/2011/12/29/parallel-particle-filtering-and-pmcmc-using-r-and-multicore/}{Parallel particle filtering and pMCMC using R and multicore}
-\item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-scala/}{Parallel Monte Carlo using Scala}
+\item Scala: \alert{\url{http://www.scala-lang.org/}}
+\item My blog: \alert{\url{http://darrenjw.wordpress.com/}}
+  \begin{itemize}
+  \item \href{http://darrenjw.wordpress.com/2013/12/23/scala-as-a-platform-for-statistical-computing-and-data-science/}{Scala as a platform for statistical computing and data science}
+  \item \href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}
+  \item \href{http://darrenjw.wordpress.com/2013/10/04/a-functional-gibbs-sampler-in-scala/}{A functional Gibbs sampler in Scala}
+  \item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-scala/}{Parallel Monte Carlo using Scala}
+  \end{itemize}
 \end{itemize}
 
 }
