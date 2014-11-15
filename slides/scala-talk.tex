@@ -1,0 +1,226 @@
+\documentclass[mathserif,handout]{beamer}
+%\documentclass{beamer}
+\usetheme{Warsaw}
+\usecolortheme{seahorse}
+\usecolortheme{orchid}
+\usepackage{amsmath,verbatim}
+\usepackage{listings}
+\usepackage[english]{babel}
+\usepackage{movie15}
+\setbeamercovered{transparent}
+
+\newcommand{\Deltap}{\ensuremath{\Delta^{\!+}}}
+\newcommand{\trans}{\ensuremath{{}^\mathrm{T}}}
+\newcommand{\eps}{\varepsilon}
+\newcommand*{\approxdist}{\mathrel{\vcenter{\offinterlineskip
+\vskip-.25ex\hbox{\hskip.55ex$\cdot$}\vskip-.25ex\hbox{$\sim$}
+\vskip-.5ex\hbox{\hskip.55ex$\cdot$}}}}
+
+\lstdefinelanguage{myR}
+{
+   language=R,
+   otherkeywords={read.table, set.seed, head},
+   deletekeywords={url,codes, t, dt, Call, formula,Q, R, on,by,hat,is,
+col, set,start,end,deltat,zip},
+   sensitive=true,
+   breaklines=true,
+   morecomment=[l]{\#},
+   morestring=[b]",
+   morestring=[b]',
+   basicstyle =\ttfamily\small,
+   keywordstyle=\bfseries,
+   showtabs=false,
+   showstringspaces=false,
+   literate= {~}{$\sim$}{2},
+   numberstyle=\sffamily\scriptsize,
+   stepnumber=2
+ }
+
+
+\begin{document}
+
+\title{Parallelisation strategies for Monte Carlo algorithms}
+\author[Darren Wilkinson --- BIRS, Banff, Canada, 6/3/14]{\textbf{\large Darren Wilkinson} \\
+\alert{\url{http://tinyurl.com/darrenjw}}\\
+School of Mathematics \& Statistics\\Newcastle University, UK}
+\date{BIRS Workshop on Scalable Bayesian Computation,\\BIRS, Banff, Canada, 6th March 2014}
+
+\frame{\titlepage}
+
+
+\frame{
+\frametitle{Outline}
+\begin{itemize}
+\item Monte Carlo
+\item PRNG and PPRNG
+\item MCMC (parallel chains and parallelised single chains)
+\item Case study: SV Models
+\item ABC (and ABC-SMC)
+\item Parallel particle filtering and pMCMC
+\item Hybrid algorithms
+\item Functional programming, immutable data structures and parallelisation
+\item Summary
+\end{itemize}
+\vspace{1ex}
+
+}
+
+
+\section{Functional programming}
+
+\subsection{Functional approach to parallelism}
+
+\frame{
+\frametitle{Functional approaches to concurrency and parallelisation}
+\begin{itemize}
+\item Previous code written a rather functional style --- a function returning a function closure that uses ``map" and ``reduce" operations
+\item Not lots of nested ``for" loops and imperative directives working with \alert{shared mutable state} (difficult for concurrency --- locks and synchronisation issues)
+\item Functional languages, \alert{immutable state}, and \alert{referentially transparent} (\alert{side-effect} free) declarative workflow patterns are widely used for systems which really need to scale (leads to naturally parallel code)
+\item Different sorts of ``scale" including:
+  \begin{itemize}
+  \item Scaling to big computations for relatively small data (HPC)
+  \item Scaling to big models and/or data --- more like distributed computing
+  \end{itemize}
+\end{itemize}
+}
+
+\begin{frame}[fragile]
+\frametitle{Parallel Monte Carlo integral in Scala}
+{\scriptsize
+\begin{lstlisting}[language=java]
+object MonteCarlo {
+  @tailrec
+  def sum(its: Long,acc: Double): Double = {
+    if (its==0) 
+      (acc)
+    else {
+      val u=ThreadLocalRandom.current().nextDouble()
+      sum(its-1,acc+exp(-u*u))
+    }
+  }
+  def main(args: Array[String]) = {
+    val N=args(0).toInt
+    val iters=1000000000
+    val its=iters/N
+    val sums=(1 to N).toList.par map {x => sum(its,0.0)}
+    val result=sums.reduce(_+_)
+    println(result/iters)
+  }
+}
+\end{lstlisting}
+}
+Actually runs \alert{faster} than the C+MPI version...
+\end{frame}
+
+\subsection{Functors, applicatives, monoids, monads, ...}
+
+\frame{
+\frametitle{Category theory}
+Dummies guide:
+\begin{itemize}
+\item A ``collection" (or parametrised ``container" type) together with a ``map" function (defined in a sensible way) represents a \alert{functor}
+\item If the collection additionally supports a (sensible) ``apply" operation, it is an \alert{applicative}
+\item If the collection additionally supports a (sensible) ``flattening" operation, it is a \alert{monad} (required for composition)
+\item For a ``reduce" operation on a collection to parallellise cleanly, the type of the collection together with the reduction operation must define a \alert{monoid} (must be an \alert{associative} operation, so that reductions can proceed in multiple threads in parallel)
+\end{itemize}
+
+}
+
+\frame{
+\frametitle{Monoids}
+\centerline{$x_1+x_2+x_3+x_4=((x_1+x_2)+x_3)+x_4=(x_1+x_2)+(x_3+x_4)$}
+\vspace{1ex}
+
+Some examples from this workshop:
+\begin{itemize}
+\item Summing up (averaging) Monte Carlo samples to estimate an expectation
+\item Pooling Monte Carlo samples (including parallel MCMC chains)
+\item Consensus Monte Carlo (weighted) summing (averaging) of subsample MCMC chains
+\item Adding (averaging) statistical regular paving histogram trees
+\item ...
+\end{itemize}
+Monoids, functors, applicatives and monads provide the mathematical structure which underpins all workflow based split/apply/combine/reduce type strategies to parallelism. 
+}
+
+\frame{
+\frametitle{Scala ecosystem}
+\alert{Scala} --- name derives from ``\emph{Scalable Language}" --- designed for concurrency and parallelism
+{\small\begin{itemize}
+\item \alert{Akka} --- actor-based concurrency framework (inspired by Erlang)
+\item \alert{Spark} --- scalable analytics library, including some ML (from Berkeley AMP Lab)
+\item \alert{Algebird} --- abstract algebra (monoid) support library (from Twitter)
+\item \alert{Scalding} --- cascading workflow library (from Twitter)
+\item \alert{Storm} --- streaming analytics library (from Twitter)
+\item \alert{Scalaz} --- category theory types (functors, monads, etc.)
+\item \alert{Breeze} --- scientific and numerical library (including nonuniform random number generation and numerical linear algebra)
+\item \alert{Saddle} --- data library
+\end{itemize}}
+Large ecosystem of software libraries and developers using Scala in the big data space...
+}
+
+\section{Summary and conclusions}
+
+\subsection{Summary}
+
+\frame{
+\frametitle{Summary}
+\begin{itemize}
+\item Unlike plain Monte Carlo, MCMC is not straightforward to
+parallelise
+\item For difficult problems with large state spaces, parallelisation
+of an MCMC algorithm is possible, using the sparse conditional independence
+structure of the underlying statistical model --- but these algorithms
+have tight synchronization requirements and tend not to scale very
+well as a result
+\item Parallel chains MCMC can scale reasonably well so long as burn-in is not significant
+\item (Non-MCMC) ABC algorithms parallelise well
+\item There are many ways to exploit parallelism, and
+statisticians should perhaps look to functional languages and concurrency models, and distributed computing technologies for inspiration
+\end{itemize}
+}
+
+\subsection{References}
+
+\frame{
+\frametitle{References}
+\begin{thebibliography}{}
+\scriptsize
+
+\bibitem{WY02}
+Wilkinson, D. J. \& Yeung, S. K. H. (2002)
+    \alert{\href{http://dx.doi.org/10.1023/A:1020711129064}{Conditional simulation from highly structured Gaussian systems, with application to blocking-MCMC for the Bayesian analysis of very large linear models}}, \emph{Statistics and Computing}, \textbf{12}(3): 287-300.
+
+\bibitem{WY04}
+Wilkinson, D. J. \& Yeung, S. K. H. (2004)
+    \alert{\href{http://dx.doi.org/10.1016/S0167-9473(02)00252-9}{A sparse matrix approach to Bayesian computation in large linear models}}, \emph{Computational Statistics and Data Analysis}, \textbf{44}(3):493-516.
+
+%\bibitem{Bro06}
+%Brockwell, A. E. (2006) Parallel Processing in Markov chain Monte Carlo Simulation by Pre-Fetching,
+%\emph{Journal of Computational and Graphical Statistics}, \textbf{15}(1):246--261.
+
+%\bibitem{WW04}
+%Whiley, M. \& Wilson, S. P. (2004) Parallel algorithms for Markov chain Monte Carlo methods in
+% latent spatial Gaussian models. \emph{Statistics and Computing},
+%\textbf{14}(3):171--179.
+
+\bibitem{Wil05}
+Wilkinson, D. J. (2005)
+\alert{\href{http://darrenjw.wordpress.com/2010/12/14/getting-started-with-parallel-mcmc/}{Parallel Bayesian Computation}}, Chapter 16 in E. J. Kontoghiorghes (ed.) Handbook of Parallel Computing and Statistics, Marcel Dekker/CRC Press, 481-512.
+\end{thebibliography}
+\vspace{1.5ex}
+
+\textbf{Blog: \alert{\url{http://darrenjw.wordpress.com/}}}
+\small
+
+\begin{itemize}
+\item \href{http://darrenjw.wordpress.com/2010/12/14/getting-started-with-parallel-mcmc/}{Getting started with parallel MCMC}
+\item \href{http://darrenjw.wordpress.com/2011/03/09/parallel-monte-carlo-with-an-intel-i7-quad-core/}{Parallel Monte Carlo with an Intel i7 Quad Core}
+\item \href{http://darrenjw.wordpress.com/2011/12/29/parallel-particle-filtering-and-pmcmc-using-r-and-multicore/}{Parallel particle filtering and pMCMC using R and multicore}
+\item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-scala/}{Parallel Monte Carlo using Scala}
+\end{itemize}
+
+}
+
+
+\end{document}
+
