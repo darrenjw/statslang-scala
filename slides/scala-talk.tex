@@ -54,12 +54,35 @@ School of Mathematics \& Statistics\\Newcastle University, UK}
 \frame{
 \frametitle{Talk outline}
 \begin{itemize}
+\item Requirements for a platform for statistical computing
 \item Background: Scala, Java and the JVM
 \item Functional programming, immutable data structures and parallelisation
-\item Parallel particle filtering
+\item Examples
 \item Summary
 \end{itemize}
 }
+
+\section{Requirements for a statistical computing platform}
+
+\frame{
+\frametitle{Feature wish list}
+\scriptsize
+It should:
+\begin{itemize}
+\item be a general purpose language with a sizable user community and an array of general purpose libraries, including good GUI libraries, networking and web frameworks
+\item be free, open-source and platform independent, fast and efficient with a strong type system, and be statically typed with good compile-time type checking and type safety
+\item have a good, well-designed library for scientific computing, including non-uniform random number generation and linear algebra
+\item have reasonable type inference and a REPL for interactive use
+\item have good tool support (including build tools, doc tools, testing tools, and an intelligent IDE)
+\item have excellent support for functional programming, including support for immutability and immutable data structures and “monadic” design
+\item allow imperative programming for those (rare) occasions where it makes sense
+\item be designed with concurrency and parallelism in mind, having excellent language and library support for building really scalable concurrent and parallel applications
+\end{itemize}
+}
+
+\section{Scala}
+
+\subsection{Introduction}
 
 \frame{
 \frametitle{Scala}
@@ -72,30 +95,109 @@ School of Mathematics \& Statistics\\Newcastle University, UK}
 \frame{
 \frametitle{History and background}
 \begin{itemize}
-\item history, userbase, relation to java, the jvm, etc.
+\item The name Scala derives from ``Scalable Language"
+\item It is a hybrid object-oriented/functional language
+\item It supports both functional and imperative styles of programming, but functional style is idiomatic
+\item It is statically typed and compiled --- compiling to Java bytecode to run on the JVM
+\item It was originally developed by Martin Odersky, one of the original authors of the Java compiler, \texttt{javac} as well as Java generics, introduced in Java 5.
+\item Development driven by percieved shortcomings of the Java programming langauge
 \end{itemize}
 }
 
 \frame{
-\frametitle{Using scala}
+\frametitle{Scala usage}
 \begin{itemize}
-\item installation, free, open source, platform independence, "packages"
+\item Scala is widely used in many large high-profile companies and organisations
+\item Many large high-traffic websites are built with Scala (eg. Twitter, Foursquare, LinkedIn, Walmart, Gilt, The Guardian, etc.) 
+\item Scala is widely used as a Data Science and Big Data platform due to its speed, robustness, concurrency, parallellism and general scalability
+\item Scala programmers are being actively recruited by many high profile data science teams
+\item Apple's new language, Swift, is essentially a proprietary dialect of Scala
+\end{itemize}
+}
+
+\frame{
+\frametitle{Using Scala}
+\begin{itemize}
+\item Scala is completely free and open source --- the entire Scala software distribution, including compiler and libraries, is released under a BSD license
+\item Scala is platform independent, running on any system for which a JVM exists
+\item Easy to install \texttt{scala} and \texttt{scalac}, the Scala compiler, but not really necessary
+\item The ``simple build tool" for Scala, \texttt{sbt}, is all that is needed to build and run most Scala projects, and this can be bootstrapped from a 1M Java file, \texttt{sbt-launcher.jar}
+\item All dependencies, including Scala library versions, and associated ``packages", can be specified in a \texttt{sbt} build file, and pulled and cached at build time --- no need to ``install" anything, ever --- most library/package versioning problems disappear 
 \end{itemize}
 }
 
 \frame{
 \frametitle{IDEs}
 \begin{itemize}
-\item IDEs and "reproducible research"
+\item There are several very good IDEs for Scala
+\item In general, IDEs are much better and much more powerful for statically typed languages --- IDEs can do lots of things to help you when programming in a statically typed langauge which simply aren't possible when using a dynamically typed language
+\item I use the ``Scala IDE" (\alert{\url{http://scala-ide.org/}}), which is based on Eclipse, but other possibilities, including IntelliJ (\alert{\url{https://www.jetbrains.com/idea/features/scala.html}}), which some prefer
+\end{itemize}
+}
+
+\frame{
+\frametitle{Reproducible research}
+\begin{itemize}
+\item Reproducible research is very important --- others should be able to run your code and reproduce your results
+  \begin{itemize}
+  \item Many within the statistics community have come to associate reproducible research with dynamic documents and literate programming --- nothing could be further from the truth!
+  \item Can more-or-less guarantee that R code and documentation written with the latest trendy literate programming framework will not build and run in 2 years time (due to incompatible library and package version changes)...
+  \end{itemize}
+\item \texttt{sbt} build files specify the particular versions of Scala and any associated dependencies required, and so projects should build and run without issues for many years
+\item Standard code documentation format, Scaladoc \alert{\url{http://docs.scala-lang.org/style/scaladoc.html}}, an improved Scala version of Javadoc
 \end{itemize}
 }
 
 \frame{
 \frametitle{Data structures and parallellism}
 \begin{itemize}
-\item blah
+\item Scala has an extensive ``Collections framework" (\alert{\url{http://docs.scala-lang.org/overviews/collections/overview.html}}), providing a large range of data structures for almost any task (Array, List, Vector, Map, Range, Stream, Queue, Stack, ...)
+\item Most collections available as either a \alert{mutable} or \alert{immutable} version --- idiomatic Scala code favours immutable collections
+\item Most collections have an associated \alert{parallel} version, providing concurrency and parallelism ``for free" (examples later)
 \end{itemize}
 }
+
+\subsection{Functional programming}
+
+\frame{
+\frametitle{Functional approaches to concurrency and parallelisation}
+\begin{itemize}
+\item Functional languages emphasise immutable state and referentially transparent functions
+\item \alert{Immutable state}, and \alert{referentially transparent} (\alert{side-effect} free) declarative workflow patterns are widely used for systems which really need to scale (leads to naturally parallel code)
+\item \alert{Shared mutable state} is the enemy of concurrency and parallelism (synchronisation, locks, waits, deadlocks, race conditions, ...) --- by avoiding \alert{mutable state}, code becomes easy to parallelise 
+\item The recent resurgence of functional programming and functional programming languages is partly driven by the realisation that functional programming provides a natural way to develop algorithms which can exploit multi-core parallel and distributed architectures, and efficiently scale
+\end{itemize}
+}
+
+\frame{
+\frametitle{Category theory}
+Dummies guide:
+\begin{itemize}
+\item A ``collection" (or parametrised ``container" type) together with a ``map" function (defined in a sensible way) represents a \alert{functor}
+\item If the collection additionally supports a (sensible) ``apply" operation, it is an \alert{applicative}
+\item If the collection additionally supports a (sensible) ``flattening" operation, it is a \alert{monad} (required for composition)
+\item For a ``reduce" operation on a collection to parallellise cleanly, the type of the collection together with the reduction operation must define a \alert{monoid} (must be an \alert{associative} operation, so that reductions can proceed in multiple threads in parallel)
+\end{itemize}
+
+}
+
+
+\frame{
+\frametitle{Scala ecosystem}
+{\small\begin{itemize}
+\item \alert{Akka} --- actor-based concurrency framework (inspired by Erlang)
+\item \alert{Spark} --- scalable analytics library, including some ML (from Berkeley AMP Lab)
+\item \alert{Algebird} --- abstract algebra (monoid) support library (from Twitter)
+\item \alert{Scalding} --- cascading workflow library (from Twitter)
+\item \alert{Storm} --- streaming analytics library (from Twitter)
+\item \alert{Scalaz} --- category theory types (functors, monads, etc.)
+\item \alert{Breeze} --- scientific and numerical library (including nonuniform random number generation and numerical linear algebra)
+\item \alert{Saddle} --- data library (data frames, etc.)
+\end{itemize}}
+Large ecosystem of software libraries and developers using Scala in the big data space...
+}
+
+\subsection{Examples}
 
 \frame{
 \frametitle{Example: linear regression}
@@ -118,30 +220,30 @@ School of Mathematics \& Statistics\\Newcastle University, UK}
 \end{itemize}
 }
 
-\frame{
-\frametitle{blah}
-\begin{itemize}
-\item blah
-\end{itemize}
-}
-
-\section{Functional programming}
-
-\subsection{Functional approach to parallelism}
+\subsection{Summary and conclusions}
 
 \frame{
-\frametitle{Functional approaches to concurrency and parallelisation}
+\frametitle{Links and further reading}
 \begin{itemize}
-\item Previous code written a rather functional style --- a function returning a function closure that uses ``map" and ``reduce" operations
-\item Not lots of nested ``for" loops and imperative directives working with \alert{shared mutable state} (difficult for concurrency --- locks and synchronisation issues)
-\item Functional languages, \alert{immutable state}, and \alert{referentially transparent} (\alert{side-effect} free) declarative workflow patterns are widely used for systems which really need to scale (leads to naturally parallel code)
-\item Different sorts of ``scale" including:
+\item Scala: \alert{\url{http://www.scala-lang.org/}}
+\item Scala on wikipedia: \alert{\url{http://en.wikipedia.org/wiki/Scala_(programming_language)}}
+\item My blog: \alert{\url{http://darrenjw.wordpress.com/}}
   \begin{itemize}
-  \item Scaling to big computations for relatively small data (HPC)
-  \item Scaling to big models and/or data --- more like distributed computing
+  \item \href{http://darrenjw.wordpress.com/2013/12/23/scala-as-a-platform-for-statistical-computing-and-data-science/}{Scala as a platform for statistical computing and data science}
+  \item \href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}
+  \item \href{http://darrenjw.wordpress.com/2013/10/04/a-functional-gibbs-sampler-in-scala/}{A functional Gibbs sampler in Scala}
+  \item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-scala/}{Parallel Monte Carlo using Scala}
   \end{itemize}
+\item This talk and code examples: \alert{\url{https://github.com/darrenjw/statslang-scala}} (also merged into \alert{\url{https://github.com/csgillespie/statslang}})
 \end{itemize}
+
 }
+
+
+
+%\subsection{Functional approach to parallelism}
+
+
 
 \begin{frame}[fragile]
 \frametitle{Parallel Monte Carlo integral in Scala}
@@ -171,19 +273,7 @@ object MonteCarlo {
 Actually runs \alert{faster} than the C+MPI version...
 \end{frame}
 
-\subsection{Functors, applicatives, monoids, monads, ...}
-
-\frame{
-\frametitle{Category theory}
-Dummies guide:
-\begin{itemize}
-\item A ``collection" (or parametrised ``container" type) together with a ``map" function (defined in a sensible way) represents a \alert{functor}
-\item If the collection additionally supports a (sensible) ``apply" operation, it is an \alert{applicative}
-\item If the collection additionally supports a (sensible) ``flattening" operation, it is a \alert{monad} (required for composition)
-\item For a ``reduce" operation on a collection to parallellise cleanly, the type of the collection together with the reduction operation must define a \alert{monoid} (must be an \alert{associative} operation, so that reductions can proceed in multiple threads in parallel)
-\end{itemize}
-
-}
+%\subsection{Functors, applicatives, monoids, monads, ...}
 
 \frame{
 \frametitle{Monoids}
@@ -201,25 +291,8 @@ Some examples from this workshop:
 Monoids, functors, applicatives and monads provide the mathematical structure which underpins all workflow based split/apply/combine/reduce type strategies to parallelism. 
 }
 
-\frame{
-\frametitle{Scala ecosystem}
-\alert{Scala} --- name derives from ``\emph{Scalable Language}" --- designed for concurrency and parallelism
-{\small\begin{itemize}
-\item \alert{Akka} --- actor-based concurrency framework (inspired by Erlang)
-\item \alert{Spark} --- scalable analytics library, including some ML (from Berkeley AMP Lab)
-\item \alert{Algebird} --- abstract algebra (monoid) support library (from Twitter)
-\item \alert{Scalding} --- cascading workflow library (from Twitter)
-\item \alert{Storm} --- streaming analytics library (from Twitter)
-\item \alert{Scalaz} --- category theory types (functors, monads, etc.)
-\item \alert{Breeze} --- scientific and numerical library (including nonuniform random number generation and numerical linear algebra)
-\item \alert{Saddle} --- data library (data frames, etc.)
-\end{itemize}}
-Large ecosystem of software libraries and developers using Scala in the big data space...
-}
 
-\section{Summary and conclusions}
-
-\subsection{Summary}
+%\subsection{Summary}
 
 \frame{
 \frametitle{Summary}
@@ -238,22 +311,8 @@ statisticians should perhaps look to functional languages and concurrency models
 \end{itemize}
 }
 
-\subsection{Links and further reading}
+%\subsection{Links and further reading}
 
-\frame{
-\frametitle{Links and further reading}
-\begin{itemize}
-\item Scala: \alert{\url{http://www.scala-lang.org/}}
-\item My blog: \alert{\url{http://darrenjw.wordpress.com/}}
-  \begin{itemize}
-  \item \href{http://darrenjw.wordpress.com/2013/12/23/scala-as-a-platform-for-statistical-computing-and-data-science/}{Scala as a platform for statistical computing and data science}
-  \item \href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}
-  \item \href{http://darrenjw.wordpress.com/2013/10/04/a-functional-gibbs-sampler-in-scala/}{A functional Gibbs sampler in Scala}
-  \item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-scala/}{Parallel Monte Carlo using Scala}
-  \end{itemize}
-\end{itemize}
-
-}
 
 
 \end{document}
