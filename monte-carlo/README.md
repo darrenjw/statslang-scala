@@ -12,7 +12,7 @@ on Windows (which should run "..\sbt.bat"), or
 
 ../sbt.sh
 
-on Linux and similar systems. If you want to be able to experiment with Scala yourself, you should copy the script and the file "sbt-launcher.jar" to the same directory somewhere in your path, but this isn't necessary to run these examples.
+on Linux and similar systems. If you want to be able to experiment with Scala yourself, you should copy the script and the file "sbt-launch.jar" to the same directory somewhere in your path, but this isn't necessary to run these examples.
 
 The sbt launcher script will download and run sbt, which will then download scala, the scala compiler, scala standard libraries and all dependencies needed to compile and run the code. All the downloaded files will be cached on your system for future use. Therefore, make sure you have a good internet connection and a bit of free disk space before running sbt for the first time.
 
