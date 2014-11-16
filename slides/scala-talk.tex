@@ -57,12 +57,13 @@ School of Mathematics \& Statistics\\Newcastle University, UK}
 \item Requirements for a platform for statistical computing
 \item Background: Scala, Java and the JVM
 \item Functional programming, immutable data structures and parallelisation
-\item Examples
-\item Summary
+\item Quick introduction to the Breeze scientific library
+\item Examples: Monte Carlo and Linear regression
+\item Wrap-up
 \end{itemize}
 }
 
-\section{Requirements for a statistical computing platform}
+\subsection{Requirements for a statistical computing platform}
 
 \frame{
 \frametitle{Feature wish list}
@@ -107,11 +108,34 @@ It should:
 \frame{
 \frametitle{Scala usage}
 \begin{itemize}
-\item Scala is widely used in many large high-profile companies and organisations
+\item Scala is widely used in many large high-profile companies and organisations --- it is now a mainstream general purpose language
 \item Many large high-traffic websites are built with Scala (eg. Twitter, Foursquare, LinkedIn, Walmart, Gilt, The Guardian, etc.) 
-\item Scala is widely used as a Data Science and Big Data platform due to its speed, robustness, concurrency, parallellism and general scalability
+\item Scala is widely used as a Data Science and Big Data platform due to its speed, robustness, concurrency, parallellism and general scalability (in addition to seamless Java interoperability)
 \item Scala programmers are being actively recruited by many high profile data science teams
-\item Apple's new language, Swift, is essentially a proprietary dialect of Scala
+\end{itemize}
+}
+
+\frame{
+\frametitle{Static versus dynamic typing, compiled versus interpreted}
+\small
+\begin{itemize}
+\item It is fun to quickly throw together a few functions in a scripting language without worrying about declaring the types of anything
+\item But for any code you want to keep or share with others you end up adding lots of boilerplate argument checking code that would be much cleaner, simpler and faster in a statically typed language
+\item For messing about prototyping, dynamic languages are attractive, but as a solid platform for statistical computing, they really don’t make sense
+\item Scala has a strong type system offering a high degree of compile-time checking, making it a safe and efficient language
+\item By maximising the work done by the compiler at build time you minimise the overheads at runtime
+\item Coupled with type inference, statically typed code is actually more consise than dynamic code
+\end{itemize}
+}
+
+\frame{
+\frametitle{Functional versus imperative programming}
+\begin{itemize}
+\item Functional programming offers many advantages over other programming styles
+\item In particular, it provides the best route to building scalable software, in terms of both program complexity and data size/complexity
+\item Scala has good support for functional programming, including immutable named values, immutable data structures and for-comprehensions
+\item Many languages are attempting to add functional features retrospectivly (eg. lambdas in C++, lambdas, streams and the option monad in Java 8, etc.)
+\item Many new and increasingly popular languages are functional, and several are inspired by Scala (eg. Apple's Swift is essentially a cut down Scala, as is Red Hat's Ceylon)
 \end{itemize}
 }
 
@@ -143,7 +167,7 @@ It should:
   \item Many within the statistics community have come to associate reproducible research with dynamic documents and literate programming --- nothing could be further from the truth!
   \item Can more-or-less guarantee that R code and documentation written with the latest trendy literate programming framework will not build and run in 2 years time (due to incompatible library and package version changes)...
   \end{itemize}
-\item \texttt{sbt} build files specify the particular versions of Scala and any associated dependencies required, and so projects should build and run without issues for many years
+\item \texttt{sbt} build files specify the particular versions of Scala and any associated dependencies required, and so projects should build and run \alert{reproducibly} without issues for many years
 \item Standard code documentation format, Scaladoc \alert{\url{http://docs.scala-lang.org/style/scaladoc.html}}, an improved Scala version of Javadoc
 \end{itemize}
 }
@@ -197,14 +221,9 @@ Dummies guide:
 Large ecosystem of software libraries and developers using Scala in the big data space...
 }
 
-\subsection{Examples}
+\section{Examples}
 
-\frame{
-\frametitle{Example: linear regression}
-\begin{itemize}
-\item blah
-\end{itemize}
-}
+\subsection{Monte Carlo}
 
 \frame{
 \frametitle{Example: Monte Carlo}
@@ -212,37 +231,6 @@ Large ecosystem of software libraries and developers using Scala in the big data
 \item blah
 \end{itemize}
 }
-
-\frame{
-\frametitle{blah}
-\begin{itemize}
-\item blah
-\end{itemize}
-}
-
-\subsection{Summary and conclusions}
-
-\frame{
-\frametitle{Links and further reading}
-\begin{itemize}
-\item Scala: \alert{\url{http://www.scala-lang.org/}}
-\item Scala on wikipedia: \alert{\url{http://en.wikipedia.org/wiki/Scala_(programming_language)}}
-\item My blog: \alert{\url{http://darrenjw.wordpress.com/}}
-  \begin{itemize}
-  \item \href{http://darrenjw.wordpress.com/2013/12/23/scala-as-a-platform-for-statistical-computing-and-data-science/}{Scala as a platform for statistical computing and data science}
-  \item \href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}
-  \item \href{http://darrenjw.wordpress.com/2013/10/04/a-functional-gibbs-sampler-in-scala/}{A functional Gibbs sampler in Scala}
-  \item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-scala/}{Parallel Monte Carlo using Scala}
-  \end{itemize}
-\item This talk and code examples: \alert{\url{https://github.com/darrenjw/statslang-scala}} (also merged into \alert{\url{https://github.com/csgillespie/statslang}})
-\end{itemize}
-
-}
-
-
-
-%\subsection{Functional approach to parallelism}
-
 
 
 \begin{frame}[fragile]
@@ -273,45 +261,62 @@ object MonteCarlo {
 Actually runs \alert{faster} than the C+MPI version...
 \end{frame}
 
-%\subsection{Functors, applicatives, monoids, monads, ...}
+\subsection{Linear regression}
 
 \frame{
-\frametitle{Monoids}
-\centerline{$x_1+x_2+x_3+x_4=((x_1+x_2)+x_3)+x_4=(x_1+x_2)+(x_3+x_4)$}
-\vspace{1ex}
-
-Some examples from this workshop:
+\frametitle{Example: linear regression}
 \begin{itemize}
-\item Summing up (averaging) Monte Carlo samples to estimate an expectation
-\item Pooling Monte Carlo samples (including parallel MCMC chains)
-\item Consensus Monte Carlo (weighted) summing (averaging) of subsample MCMC chains
-\item Adding (averaging) statistical regular paving histogram trees
-\item ...
+\item blah
 \end{itemize}
-Monoids, functors, applicatives and monads provide the mathematical structure which underpins all workflow based split/apply/combine/reduce type strategies to parallelism. 
+}
+
+\frame{
+\frametitle{blah}
+\begin{itemize}
+\item blah
+\end{itemize}
 }
 
 
-%\subsection{Summary}
+
+
+
+\subsection{Summary and further pointers}
 
 \frame{
 \frametitle{Summary}
 \begin{itemize}
-\item Unlike plain Monte Carlo, MCMC is not straightforward to
-parallelise
-\item For difficult problems with large state spaces, parallelisation
-of an MCMC algorithm is possible, using the sparse conditional independence
-structure of the underlying statistical model --- but these algorithms
-have tight synchronization requirements and tend not to scale very
-well as a result
-\item Parallel chains MCMC can scale reasonably well so long as burn-in is not significant
-\item (Non-MCMC) ABC algorithms parallelise well
-\item There are many ways to exploit parallelism, and
-statisticians should perhaps look to functional languages and concurrency models, and distributed computing technologies for inspiration
+\item Strong arguments can be made that a language to be used as a platform for statistical computing should be general purpose, platform independent, functional, statically typed and compiled
+\item For basic exploratory data analysis, visualisation and model fitting, R works perfectly well (currently better than Scala)
+\item Scala is worth considering if you are interested in any of the following:
+  \begin{itemize}
+  \item Writing your own statistical routines or algorithms
+  \item Working with computationally intensive (parallel) algorithms
+  \item Working with large and complex models for which an out-of-the-box solution doesn't exist in R
+  \item Working with large data sets (big data)
+  \item Integrating statistical analysis workflow with other system components (including web infrastructure, relational databases, no-sql databases, etc.)
+  \end{itemize}
 \end{itemize}
 }
 
-%\subsection{Links and further reading}
+
+\frame{
+\frametitle{Links and further reading}
+\begin{itemize}
+\item Scala: \alert{\url{http://www.scala-lang.org/}}
+\item Scala on wikipedia: \alert{\url{http://en.wikipedia.org/wiki/Scala_(programming_language)}}
+\item My blog: \alert{\url{http://darrenjw.wordpress.com/}}
+  \begin{itemize}
+  \item \href{http://darrenjw.wordpress.com/2013/12/23/scala-as-a-platform-for-statistical-computing-and-data-science/}{Scala as a platform for statistical computing and data science}
+  \item \href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}
+  \item \href{http://darrenjw.wordpress.com/2013/10/04/a-functional-gibbs-sampler-in-scala/}{A functional Gibbs sampler in Scala}
+  \item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-scala/}{Parallel Monte Carlo using Scala}
+  \end{itemize}
+\item This talk and code examples: \alert{\url{https://github.com/darrenjw/statslang-scala}} (also merged into \alert{\url{https://github.com/csgillespie/statslang}})
+\end{itemize}
+
+}
+
 
 
 
