@@ -146,9 +146,18 @@ It should:
 \item Scala is platform independent, running on any system for which a JVM exists
 \item Easy to install \texttt{scala} and \texttt{scalac}, the Scala compiler, but not really necessary
 \item The ``simple build tool" for Scala, \texttt{sbt}, is all that is needed to build and run most Scala projects, and this can be bootstrapped from a 1M Java file, \texttt{sbt-launch.jar}
-\item All dependencies, including Scala library versions, and associated ``packages", can be specified in a \texttt{sbt} build file, and pulled and cached at build time --- no need to ``install" anything, ever --- most basic library/package versioning problems simply disappear 
 \end{itemize}
 }
+
+\frame{
+\frametitle{Versions, packages, platform independence, cloud}
+\begin{itemize}
+\item All dependencies, including Scala library versions, and associated ``packages", can be specified in a \texttt{sbt} build file, and pulled and cached at build time --- no need to ``install" anything, ever --- most basic library/package versioning problems simply disappear
+\item This is particularly convenient when scaling out to virtual machines and lightweight containers (such as Docker) in the cloud
+\item All that is required is a container with a JVM, and you can either build from source or push a redistributable binary package 
+\end{itemize}
+}
+
 
 \frame{
 \frametitle{IDEs}
