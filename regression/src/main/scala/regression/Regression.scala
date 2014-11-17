@@ -6,7 +6,6 @@ object Regression {
   import scala.math.log
   import breeze.linalg.{ DenseMatrix, DenseVector }
   import breeze.plot._
-  //import org.saddle._
   import org.saddle.io._
   import FrameUtils._
 
@@ -33,8 +32,8 @@ object Regression {
 
     val f0 = Figure()
     val p0 = f0.subplot(0)
-    p0 += plot(frame2mat(ageM)(::, 0), frame2mat(oiM)(::, 0), '.')
-    p0 += plot(frame2mat(ageF)(::, 0), frame2mat(oiF)(::, 0), '.', "red")
+    p0 += plot(frame2vec(ageM), frame2vec(oiM), '.')
+    p0 += plot(frame2vec(ageF), frame2vec(oiF), '.', "red")
     p0.xlabel = "Age"
     p0.ylabel = "OI"
     p0.title = "OI against age"
