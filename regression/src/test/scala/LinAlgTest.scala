@@ -40,6 +40,7 @@ class LinAlgTest extends FunSuite {
     assert(m.names.length === 2)
     assert(approxeq(m.coefficients(0, 0), 2.0))
     assert(approxeq(m.coefficients(1, 0), 0.5))
+    assert(approxeq(sum(abs(m.residuals)), 0.0))
   }
 
   test("Backsolve vector") {

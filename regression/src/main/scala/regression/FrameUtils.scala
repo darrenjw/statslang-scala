@@ -6,6 +6,10 @@ import org.saddle.io._
 
 object FrameUtils {
 
+   def frameFilter[T](f1: Frame[Int,String,T],f2: Frame[Int,String,Double],p: Double=>Boolean): Frame[Int,String,T] = {
+     f1.row(f2.rfilter(x=>p(x.at(0).get)).rowIx.toVec)
+  }
+  
   def frame2mat[T](df: Frame[T, String, Double]): DenseMatrix[Double] = {
     // DenseMatrix(df.numRows,df.numCols,df.toMat.contents)
     // TODO: The above doesn't seem to work for some reason, so loop over columns instead as a temp hack

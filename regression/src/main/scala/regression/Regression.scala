@@ -4,7 +4,7 @@ package regression
 object Regression {
 
   import scala.math.log
-  //import breeze.linalg.{ DenseMatrix, DenseVector }
+  import breeze.linalg.{ DenseMatrix, DenseVector }
   import breeze.plot._
   //import org.saddle._
   import org.saddle.io._
@@ -19,17 +19,17 @@ object Regression {
     val df = CsvParser.parse(file).withColIndex(0)
     println(df)
 
-    val df2 = df.row((getCol("Age", df).rfilter(_.at(0).get > 0.0)).rowIx.toVec)
+    val df2 = frameFilter(df, getCol("Age", df), _ > 0.0)
     println(df2)
-    
+
     val oi = getCol("OI", df2)
     val age = getCol("Age", df2)
     val sex = getColS("Sex", df2).mapValues(x => if (x == "Male") 1.0 else 0.0)
 
-    val oiM = oi.row(sex.rfilter(_.at(0).get == 1.0).rowIx.toVec)
-    val oiF = oi.row(sex.rfilter(_.at(0).get == 0.0).rowIx.toVec)
-    val ageM = age.row(sex.rfilter(_.at(0).get == 1.0).rowIx.toVec)
-    val ageF = age.row(sex.rfilter(_.at(0).get == 0.0).rowIx.toVec)
+    val oiM = frameFilter(oi, sex, _ == 1.0)
+    val oiF = frameFilter(oi, sex, _ == 0.0)
+    val ageM = frameFilter(age, sex, _ == 1.0)
+    val ageF = frameFilter(age, sex, _ == 0.0)
 
     val f0 = Figure()
     val p0 = f0.subplot(0)
@@ -44,7 +44,7 @@ object Regression {
     val m = Lm(y, List(age, sex))
     println(m)
     m.plotResiduals
-    
+
     val sum = m.summary
     println(sum)
 
