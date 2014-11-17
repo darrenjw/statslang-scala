@@ -34,9 +34,9 @@ object ScratchTestSheet {
                                                   //| 
 
   val dm = frame2mat(frame.mapValues(CsvParser.parseDouble))
-                                                  //> Nov 16, 2014 9:18:52 PM com.github.fommil.jni.JniLoader liberalLoad
-                                                  //| INFO: successfully loaded /tmp/jniloader497204747364478781netlib-native_syst
-                                                  //| em-linux-x86_64.so
+                                                  //> Nov 17, 2014 7:54:23 PM com.github.fommil.jni.JniLoader liberalLoad
+                                                  //| INFO: successfully loaded /tmp/jniloader3839027076120842657netlib-native_sys
+                                                  //| tem-linux-x86_64.so
                                                   //| dm  : breeze.linalg.DenseMatrix[Double] = 5.0    65.0   NaN  
                                                   //| 3.75   40.0   NaN  
                                                   //| 7.6    52.0   NaN  
@@ -69,11 +69,10 @@ object ScratchTestSheet {
                                                   //| 4.84   55.0   NaN  
                                                   //| 6.75   61.0   NaN  
                                                   //| 8.35   29.0   NaN  
-                                                  //| 3.75   27.
+                                                  //| 3.75   27
                                                   //| Output exceeds cutoff limit.
 
-  val f = Figure()                                //> f  : breeze.plot.Figure = breeze.plot.Figure@47cd0dbb
-  val p = f.subplot(0)                            //> p  : breeze.plot.Plot = breeze.plot.Plot@66bfeeae
-  p += plot(dm(::, 1), dm(::, 0), '.',"red")      //> res0: breeze.plot.Plot = breeze.plot.Plot@66bfeeae/
+ (1 to 10).toArray                                //> res0: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
 
 }

@@ -1,6 +1,7 @@
 package regression
 
 import breeze.linalg.{ DenseMatrix, DenseVector }
+import breeze.plot._
 import org.saddle._
 import com.github.fommil.netlib.BLAS.{ getInstance => blas }
 import FrameUtils._
@@ -19,12 +20,20 @@ class Lm(yf: Frame[Int, String, Double], X: ModelMatrix) {
   val coeffFrame = mat2frame(coefficients, Index(X.names.toArray), yf.colIx)
 
   override def toString: String = coeffFrame.toString
+
   def summary: LmSummary = new LmSummary(this)
 
-  def backSolve(A: DenseMatrix[Double], y: DenseMatrix[Double]): DenseMatrix[Double] = {
-    val yc = y.copy
-    blas.dtrsm("L", "U", "N", "N", y.rows, y.cols, 1.0, A.toArray, A.rows, yc.data, y.rows)
-    yc
+  def plotResiduals = {
+    val f = Figure()
+    val p = f.subplot(0)
+    p += plot(fitted(::, 0), residuals(::, 0), '.')
+    p.xlabel = "Fitted Values"
+    p.ylabel = "Residulals"
+    p.title = "Residuals against fitted values"
+    val p2 = f.subplot(1, 2, 1)
+    p2 += hist(residuals(::, 0))
+    p2.title = "Residual Histogram"
+    f.saveas("resid.png")
   }
 
   // TODO: This is VERY inefficient for large n - need to replace with a proper thin QR by modifying qr() function definition
@@ -34,6 +43,12 @@ class Lm(yf: Frame[Int, String, Double], X: ModelMatrix) {
     val p = A.cols
     val linalg.qr.QR(_Q, _R) = linalg.qr(A)
     (_Q(::, 0 until p), _R(0 until p, ::))
+  }
+
+  def backSolve(A: DenseMatrix[Double], y: DenseMatrix[Double]): DenseMatrix[Double] = {
+    val yc = y.copy
+    blas.dtrsm("L", "U", "N", "N", y.rows, y.cols, 1.0, A.toArray, A.rows, yc.data, y.rows)
+    yc
   }
 
   // Not actually using this now, but will be useful for something... 
