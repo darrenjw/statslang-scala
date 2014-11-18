@@ -322,17 +322,55 @@ println(5.0*mc3(N)/N)
 This kind of code is typically more-or-less as fast (sometimes faster!) than native C/MPI code...
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Example: Monte Carlo (4)}
+Timings for $10^7$ iterations on my laptop:
+{\small
+\begin{lstlisting}[language=java]
+> run
+[info] Running MonteCarlo 
+Running with 10000000 iterations
+Idiomatic vectorised solution
+0.999661
+time: 2957.277005ms
+Fast efficient (serial) tail call
+1.000262
+time: 1395.82964ms
+Parallelised version
+1.000463
+time: 337.361038ms
+Done
+\end{lstlisting}}
+\end{frame}
+
+
+
 \subsection{Linear regression}
 
 \frame{
-\frametitle{Example: linear regression}
+\frametitle{Example: linear regression (1)}
 \begin{itemize}
-\item blah
+\item Read a CSV file with 3 columns --- 2 numeric and one binary factor --- regress first (numeric) column on other two --- plots and summary statistics
+\item This is simple exploratory data analysis for a small data set --- I would use R for this!
+\item No reason why Scala can't do this kind of thing, but not the interest of current Scala developers
+\item Two standard implementations of multiple linear regression in Scala that I know of:
+  \begin{itemize}
+  \item Breeze: \texttt{leastSquares} (LAPACK call to \texttt{dgels})
+  \item Spark MLlib: \texttt{LinearRegressionWithSGD} (stochastic gradient descent)
+  \end{itemize}
+\item Both work perfectly well for obtaining least squares estimates of regression coefficients, but not much in the way of statistical diagnostics.
 \end{itemize}
 }
 
 \frame{
-\frametitle{blah}
+\frametitle{Example: linear regression (2)}
+\begin{itemize}
+\item Not one to shirk a challenge, I spent a couple of evenings writing a few classes for linear regression building on Saddle and Breeze...
+\end{itemize}
+}
+
+\frame{
+\frametitle{Example: linear regression (3)}
 \begin{itemize}
 \item blah
 \end{itemize}
