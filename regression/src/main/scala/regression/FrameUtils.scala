@@ -42,6 +42,7 @@ object FrameUtils {
     sdf.col(colName)
   }
 
+  // TODO: Need to implement this properly!
   def getColF[T, U](colName: String, sdf: Frame[T, String, U]): Frame[T, String, Double] = {
     getColS(colName, sdf).mapValues(x => if (x == "Male") 1.0 else 0.0)
   }

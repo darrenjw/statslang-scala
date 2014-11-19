@@ -377,20 +377,69 @@ Done
 }
 
 \frame{
+\frametitle{Example: linear regression (4)}
+Scala could be just as convenient as R and similar languages for basic exploratory data analysis and visualisation, but this would require a little effort from people interested in having this functionality:
+\begin{itemize}
+\item Port the \texttt{statsmodels} package from Python
+\item Port \texttt{ggplot} (or similar viz framework)
+\item Re-write Saddle to have its data frames backed by Breeze matrices, and incorporate into Breeze
+\end{itemize}
+Each of these could be accomplished with relatively little effort (eg. a GSoC student or two) if the demand exists
+}
+
+\begin{frame}[fragile]
 \frametitle{Example: Gibbs sampler}
-\begin{itemize}
-\item blah
-\end{itemize}
+{\scriptsize
+\begin{lstlisting}[language=java]
+class State(val x: Double,val y: Double)
+ 
+def nextIter(s: State): State = {
+     val newX=rngG.nextDouble(3.0,(s.y)*(s.y)+4.0)
+     new State(newX, 
+          rngN.nextDouble(1.0/(newX+1),1.0/sqrt(2*newX+2)))
 }
-
-\frame{
-\frametitle{Example: Particle filter}
-\begin{itemize}
-\item blah
-\end{itemize}
+ 
+def nextThinnedIter(s: State,left: Int): State = {
+   if (left==0) s 
+   else nextThinnedIter(nextIter(s),left-1)
 }
+ 
+def genIters(s: State,current: Int,stop: Int,thin: Int): State = {
+     if (!(current>stop)) {
+        println(current+" "+s.x+" "+s.y)
+        genIters(nextThinnedIter(s,thin),current+1,stop,thin)
+     }
+     else s
+}
+\end{lstlisting}
+}
+\end{frame}
 
-
+\begin{frame}[fragile]
+\frametitle{Example: Parallel particle filter}
+{\scriptsize
+\begin{lstlisting}[language=java]
+(th: P) => {
+  val x0 = simx0(n, t0, th).par
+  @tailrec def pf(ll: LogLik, x: ParVector[S], t: Time, 
+             deltas: List[Time], obs: List[O]): LogLik =
+    obs match {
+      case Nil => ll
+      case head :: tail => {
+        val xp = if (deltas.head == 0) x else 
+               (x map { stepFun(_, t, deltas.head, th) })
+        val w = xp map { dataLik(_, head, th) }
+        val rows = sample(n, DenseVector(w.toArray)).par
+        val xpp = rows map { xp(_) }
+        pf(ll + math.log(mean(w)), xpp, t + deltas.head, 
+                                        deltas.tail, tail)
+      }
+    }
+  pf(0, x0, t0, deltas, obs)
+}
+\end{lstlisting}
+}
+\end{frame}
 
 
 \subsection{Summary and further pointers}
