@@ -23,7 +23,7 @@ object Regression {
 
     val oi = getCol("OI", df2)
     val age = getCol("Age", df2)
-    val sex = getColS("Sex", df2).mapValues(x => if (x == "Male") 1.0 else 0.0)
+    val sex = getColF("Sex", df2)
 
     val oiM = frameFilter(oi, sex, _ == 1.0)
     val oiF = frameFilter(oi, sex, _ == 0.0)

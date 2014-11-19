@@ -38,8 +38,12 @@ object FrameUtils {
     sdf.col(colName).mapValues(CsvParser.parseDouble)
   }
 
-  def getColS[T,U](colName: String, sdf: Frame[T, String, U]): Frame[T, String, U] = {
+  def getColS[T, U](colName: String, sdf: Frame[T, String, U]): Frame[T, String, U] = {
     sdf.col(colName)
+  }
+
+  def getColF[T, U](colName: String, sdf: Frame[T, String, U]): Frame[T, String, Double] = {
+    getColS(colName, sdf).mapValues(x => if (x == "Male") 1.0 else 0.0)
   }
 
 }
