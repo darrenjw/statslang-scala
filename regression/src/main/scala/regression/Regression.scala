@@ -17,14 +17,15 @@ object Regression {
     val file = CsvFile("data/regression.csv")
     val df = CsvParser.parse(file).withColIndex(0)
     println(df)
+    framePlot(getCol("Age",df),getCol("OI",df))
 
     val df2 = frameFilter(df, getCol("Age", df), _ > 0.0)
     println(df2)
-
     val oi = getCol("OI", df2)
     val age = getCol("Age", df2)
     val sex = getColF("Sex", df2)
-
+    framePlot(age,oi)
+    
     val oiM = frameFilter(oi, sex, _ == 1.0)
     val oiF = frameFilter(oi, sex, _ == 0.0)
     val ageM = frameFilter(age, sex, _ == 1.0)

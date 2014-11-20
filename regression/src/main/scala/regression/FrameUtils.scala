@@ -1,6 +1,7 @@
 package regression
 
 import breeze.linalg.{ DenseMatrix, DenseVector }
+import breeze.plot._
 import org.saddle._
 import org.saddle.io._
 
@@ -47,10 +48,20 @@ object FrameUtils {
     val sCol = getColS(colName, sdf)
     val levels = sCol.colAt(0).toVec.contents.toList.groupBy(identity).mapValues(_.length).keys.toList.sorted
     val dummies = levels.tail
-    val dummyLabels=dummies.map{colName+_}
+    val dummyLabels = dummies.map { colName + _ }
     val boolFrame = joinFrames(dummies.map { dl => sCol.mapValues(_ == dl) })
-    val modFrame=boolFrame.mapValues(x => if (x == true) 1.0 else 0.0)
-    Frame(modFrame.toMat,modFrame.rowIx,Index(dummyLabels.toArray))
+    val modFrame = boolFrame.mapValues(x => if (x == true) 1.0 else 0.0)
+    Frame(modFrame.toMat, modFrame.rowIx, Index(dummyLabels.toArray))
+  }
+
+  def framePlot[T](x: Frame[T, String, Double], y: Frame[T, String, Double]) = {
+    val f = Figure()
+    val p = f.subplot(0)
+    p += plot(frame2vec(x), frame2vec(y), '.')
+    p.xlabel = x.colIx.uniques.toSeq.head
+    p.ylabel = y.colIx.uniques.toSeq.head
+    p.title = p.ylabel + " against " + p.xlabel
+    f
   }
 
 }
