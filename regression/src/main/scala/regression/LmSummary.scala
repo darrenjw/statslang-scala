@@ -7,6 +7,7 @@ import org.saddle._
 import scala.math.sqrt
 import breeze.numerics
 import breeze.stats.distributions.{ Gaussian, StudentsT }
+import org.apache.commons.math3.special.Beta
 import FrameUtils._
 
 class LmSummary(m: Lm) {
@@ -27,7 +28,8 @@ class LmSummary(m: Lm) {
   val t = m.coefficients(::, 0) / se
   val tF = Frame(Vec(t.toArray), m.coeffFrame.rowIx, Index("t-val"))
   //val p=t.map{1.0-StudentsT(df).cdf(_)}.map{_*2} // .cdf missing... filed an issue - no incomplete beta function
-  val p = t.map { 1.0 - Gaussian(0.0, 1.0).cdf(_) }.map { _ * 2 } // TODO: Gaussian approximate p-value for now... 
+  //val p = t.map { 1.0 - Gaussian(0.0, 1.0).cdf(_) }.map { _ * 2 } // TODO: Gaussian approximate p-value for now... 
+  val p = t.map { 1.0 - tCDF(_, df) }.map { _ * 2 }
   val pF = Frame(Vec(p.toArray), m.coeffFrame.rowIx, Index("p-val"))
   val coeff = joinFrames(List(m.coeffFrame, seF, tF, pF))
   val ybar = mean(m.y(::, 0))
@@ -48,6 +50,11 @@ class LmSummary(m: Lm) {
     val a = v.toArray
     val f = Array(0.0, 0.25, 0.5, 0.75, 1.0) map { percentile(a, _) }
     Series(Vec(f), Index("Min", "LQ", "Median", "UQ", "Max"))
+  }
+
+  def tCDF(t: Double, df: Double): Double = {
+    val xt = df / (t * t + df)
+    1.0 - 0.5 * Beta.regularizedBeta(xt, 0.5 * df, 0.5)
   }
 
 }

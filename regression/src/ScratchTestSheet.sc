@@ -34,8 +34,8 @@ object ScratchTestSheet {
                                                   //| 
 
   val dm = frame2mat(frame.mapValues(CsvParser.parseDouble))
-                                                  //> Nov 20, 2014 12:53:18 PM com.github.fommil.jni.JniLoader liberalLoad
-                                                  //| INFO: successfully loaded /tmp/jniloader2110429880889737436netlib-native_sys
+                                                  //> Nov 20, 2014 8:59:09 PM com.github.fommil.jni.JniLoader liberalLoad
+                                                  //| INFO: successfully loaded /tmp/jniloader6004946347501313689netlib-native_sys
                                                   //| tem-linux-x86_64.so
                                                   //| dm  : breeze.linalg.DenseMatrix[Double] = 5.0    65.0   NaN  
                                                   //| 3.75   40.0   NaN  
@@ -69,15 +69,25 @@ object ScratchTestSheet {
                                                   //| 4.84   55.0   NaN  
                                                   //| 6.75   61.0   NaN  
                                                   //| 8.35   29.0   NaN  
-                                                  //| 3.75   2
+                                                  //| 3.75   27
                                                   //| Output exceeds cutoff limit.
 
- (1 to 10).toArray                                //> res0: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+  (1 to 10).toArray                               //> res0: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
-List("Male","Female","Male","Male","Female").groupBy(identity).mapValues(_.length).keys.toList.sorted
+  List("Male", "Female", "Male", "Male", "Female").groupBy(identity).mapValues(_.length).keys.toList.sorted
                                                   //> res1: List[String] = List(Female, Male)
 
-getColS("Sex",frame).colAt(0).toVec.contents.groupBy(identity).mapValues(_.length).keys.toList.sorted
+  getColS("Sex", frame).colAt(0).toVec.contents.groupBy(identity).mapValues(_.length).keys.toList.sorted
                                                   //> res2: List[String] = List(Female, Male)
+
+  import org.apache.commons.math3.special.Beta
+  Beta.regularizedBeta(0.5, 2, 3)                 //> res3: Double = 0.6875
+
+  def tCDF(t: Double, df: Double): Double = {
+    val xt = df / (t * t + df)
+    1.0 - 0.5 * Beta.regularizedBeta(xt, 0.5 * df, 0.5)
+  }                                               //> tCDF: (t: Double, df: Double)Double
+
+  tCDF(2.76, 97)                                  //> res4: Double = 0.9965442296020979
 
 }
