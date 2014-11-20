@@ -44,7 +44,7 @@ object FrameUtils {
   }
 
   // TODO: Uses treatment contrasts - should allow sum contrasts, too, at least
-  def getColF(colName: String, sdf: Frame[Int, String, String]): Frame[Int, String, Double] = {
+  def getFactor(colName: String, sdf: Frame[Int, String, String]): Frame[Int, String, Double] = {
     val sCol = getColS(colName, sdf)
     val levels = sCol.colAt(0).toVec.contents.toList.groupBy(identity).mapValues(_.length).keys.toList.sorted
     val dummies = levels.tail
@@ -54,7 +54,7 @@ object FrameUtils {
     Frame(modFrame.toMat, modFrame.rowIx, Index(dummyLabels.toArray))
   }
 
-  def framePlot[T](x: Frame[T, String, Double], y: Frame[T, String, Double]) = {
+  def framePlot[T](x: Frame[T, String, Double], y: Frame[T, String, Double]): Figure = {
     val f = Figure()
     val p = f.subplot(0)
     p += plot(frame2vec(x), frame2vec(y), '.')
@@ -64,4 +64,25 @@ object FrameUtils {
     f
   }
 
+  def framePlot[T](x: Frame[T, String, Double], y: Frame[T, String, Double], f: Frame[T, String, Double]): Figure = {
+    val colours = Vector("red", "green", "black", "cyan", "magenta", "yellow", "blue")
+    val fig = Figure()
+    val p = fig.subplot(0)
+    var ind = f.rfilter(_.sum < 0.5).rowIx.toVec
+    var xi = x.row(ind)
+    var yi = y.row(ind)
+    p += plot(frame2vec(xi), frame2vec(yi), '.')
+    for (i <- 0 until f.numCols) {
+      ind = f.rfilter(_.at(i).get == 1.0).rowIx.toVec
+      xi = x.row(ind)
+      yi = y.row(ind)
+      p += plot(frame2vec(xi), frame2vec(yi), '.', colours(i))
+    }
+    p.ylabel = y.colIx.uniques.toSeq.head
+    p.xlabel = x.colIx.uniques.toSeq.head
+    p.title = p.ylabel + " against " + p.xlabel
+    fig
+  }
+
 }
+

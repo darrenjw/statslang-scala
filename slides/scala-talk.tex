@@ -117,11 +117,10 @@ It should:
 
 \frame{
 \frametitle{Static versus dynamic typing, compiled versus interpreted}
-\small
+%\small
 \begin{itemize}
 \item It is fun to quickly throw together a few functions in a scripting language without worrying about declaring the types of anything
 \item But for any code you want to keep or share with others you end up adding lots of boilerplate argument checking code that would be much cleaner, simpler and faster in a statically typed language
-\item For messing about prototyping, dynamic languages are attractive, but as a solid platform for statistical computing, they really don’t make sense
 \item Scala has a strong type system offering a high degree of compile-time checking, making it a safe and efficient language
 \item By maximising the work done by the compiler at build time you minimise the overheads at runtime
 \item Coupled with type inference, statically typed code is actually more concise than dynamic code
@@ -362,23 +361,122 @@ Done
 \end{itemize}
 }
 
-\frame{
+\begin{frame}[fragile]
 \frametitle{Example: linear regression (2)}
 \begin{itemize}
-\item Not one to shirk a challenge, I spent a couple of evenings writing a few classes for linear regression building on Saddle and Breeze...
+\item Not one to shirk a challenge, I spent a couple of evenings writing a few classes for linear regression, building on Saddle and Breeze...
 \end{itemize}
-}
+{\small
+\begin{lstlisting}[language=java]
+import regression._
+import scala.math.log
+import org.saddle.io._
+import FrameUtils._
 
-\frame{
+val file = CsvFile("data/regression.csv")
+val df = CsvParser.parse(file).withColIndex(0)
+println(df)
+framePlot(getCol("Age", df), getCol("OI", df))
+\end{lstlisting}
+}
+\end{frame}
+
+\begin{frame}[fragile]
 \frametitle{Example: linear regression (3)}
-\begin{itemize}
-\item blah
-\end{itemize}
+{\scriptsize
+\begin{lstlisting}[language=java]
+scala>  val df = CsvParser.parse(file).withColIndex(0)
+df: org.saddle.Frame[Int,String,String] =
+[101 x 3]
+         OI Age    Sex
+       ---- --- ------
+  1 ->    5  65 Female
+  2 -> 3.75  40 Female
+  3 ->  7.6  52 Female
+  4 -> 2.45  45 Female
+  5 ->  5.4  72 Female
+...
+ 97 -> 8.89  57   Male
+ 98 -> 16.5  56   Male
+ 99 -> 4.65  53   Male
+100 -> 13.5  56   Male
+101 -> 16.1  66   Male
+
+scala> 
+\end{lstlisting}
+}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Example: linear regression (4)}
+{\scriptsize
+\begin{lstlisting}[language=java]
+val df2 = frameFilter(df, getCol("Age", df), _ > 0.0)
+println(df2)
+val oi = getCol("OI", df2)
+val age = getCol("Age", df2)
+val sex = getFactor("Sex", df2)
+framePlot(age, oi, sex).saveas("data.png")
+
+val y = oi.mapValues { log(_) }
+val m = Lm(y, List(age, sex))
+println(m)
+m.plotResiduals.saveas("resid.png")
+
+val sum = m.summary
+println(sum)
+\end{lstlisting}
+}
+\end{frame}
+
+\frame{
+\frametitle{Example: linear regression (5)}
+\centerline{\includegraphics[width=\textwidth]{../regression/data}}
 }
 
 \frame{
-\frametitle{Example: linear regression (4)}
-Scala could be just as convenient as R and similar languages for basic exploratory data analysis and visualisation, but this would require a little effort from people interested in having this functionality:
+\frametitle{Example: linear regression (6)}
+\centerline{\includegraphics[width=\textwidth]{../regression/resid}}
+}
+
+
+\begin{frame}[fragile]
+\frametitle{Example: linear regression (7)}
+{\scriptsize
+\begin{lstlisting}[language=java]
+scala> m.summary
+res6: regression.LmSummary =
+Residuals:
+[5 x 1]
+   Min -> -1.4005
+    LQ -> -0.2918
+Median ->  0.0308
+    UQ ->  0.3211
+   Max ->  0.8979
+Coefficients:
+[3 x 4]
+                   OI     SE  t-val  p-val
+               ------ ------ ------ ------
+(Intercept) -> 0.8292 0.1777 4.6661 0.0000
+        Age -> 0.0162 0.0035 4.6027 0.0000
+    SexMale -> 0.3189 0.1157 2.7567 0.0058
+Model statistics:
+[6 x 1]
+          RSS -> 20.0999
+          RSE ->  0.4552
+           df -> 97.0000
+    R-squared ->  0.2621
+Adjusted R-sq ->  0.2469
+       F-stat -> 17.2265
+
+scala> 
+\end{lstlisting}
+}
+\end{frame}
+
+\frame{
+\frametitle{Example: linear regression (8)}
+So we see that Scala could be just as convenient as R and similar languages for basic exploratory data analysis and visualisation, but this would require a little effort from people interested in having this functionality:
 \begin{itemize}
 \item Port the \texttt{statsmodels} package from Python
 \item Port \texttt{ggplot} (or similar viz framework)

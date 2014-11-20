@@ -23,7 +23,7 @@ class Lm(yf: Frame[Int, String, Double], X: ModelMatrix) {
 
   def summary: LmSummary = new LmSummary(this)
 
-  def plotResiduals = {
+  def plotResiduals: Figure = {
     val f = Figure()
     val p = f.subplot(0)
     p += plot(fitted(::, 0), residuals(::, 0), '.')
@@ -33,7 +33,7 @@ class Lm(yf: Frame[Int, String, Double], X: ModelMatrix) {
     val p2 = f.subplot(1, 2, 1)
     p2 += hist(residuals(::, 0))
     p2.title = "Residual Histogram"
-    f.saveas("resid.png")
+    f
   }
 
   // TODO: This is VERY inefficient for large n - need to replace with a proper thin QR by modifying qr() function definition
