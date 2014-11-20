@@ -36,6 +36,7 @@ col, set,start,end,deltat,zip},
    stepnumber=2
  }
 
+\lstset{basicstyle=\ttfamily\color{blue}}
 
 \begin{document}
 
@@ -90,7 +91,7 @@ It should:
 \centerline{\includegraphics[width=\textwidth]{scala-website}}
 \mbox{}\\
 \bigskip
-\alert{\url{http://www.scala-lang.org/}}
+\alert{\url{http://www.Scala-lang.org/}}
 }
 
 \frame{
@@ -143,7 +144,7 @@ It should:
 \begin{itemize}
 \item Scala is completely free and open source --- the entire Scala software distribution, including compiler and libraries, is released under a BSD license
 \item Scala is platform independent, running on any system for which a JVM exists
-\item Easy to install \texttt{scala} and \texttt{scalac}, the Scala compiler, but not really necessary
+\item Easy to install \texttt{Scala} and \texttt{scalac}, the Scala compiler, but not really necessary
 \item The ``simple build tool" for Scala, \texttt{sbt}, is all that is needed to build and run most Scala projects, and this can be bootstrapped from a 1M Java file, \texttt{sbt-launch.jar}
 \end{itemize}
 }
@@ -163,7 +164,7 @@ It should:
 \begin{itemize}
 \item There are several very good IDEs for Scala
 \item In general, IDEs are much better and much more powerful for statically typed languages --- IDEs can do lots of things to help you when programming in a statically typed language which simply aren't possible when using a dynamically typed language
-\item I use the ``Scala IDE" (\alert{\url{http://scala-ide.org/}}), which is based on Eclipse, but other possibilities, including IntelliJ (\alert{\url{https://www.jetbrains.com/idea/features/scala.html}}), which some prefer
+\item I use the ``Scala IDE" (\alert{\url{http://Scala-ide.org/}}), which is based on Eclipse, but other possibilities, including IntelliJ (\alert{\url{https://www.jetbrains.com/idea/features/Scala.html}}), which some prefer
 \item If you use an IDE, your code will (almost) always compile first time
 \end{itemize}
 }
@@ -177,14 +178,14 @@ It should:
   \item Can more-or-less guarantee that R code and documentation written with the latest trendy literate programming framework will not build and run in 2 years time (due to incompatible library and package version changes)...
   \end{itemize}
 \item \texttt{sbt} build files specify the particular versions of Scala and any associated dependencies required, and so projects should build and run \alert{reproducibly} without issues for many years
-\item Standard code documentation format, \alert{\href{http://docs.scala-lang.org/style/scaladoc.html}{Scaladoc}}, an improved Scala version of Javadoc, and standard testing frameworks such as ScalaTest.
+\item Standard code documentation format, \alert{\href{http://docs.Scala-lang.org/style/scaladoc.html}{Scaladoc}}, an improved Scala version of Javadoc, and standard testing frameworks such as ScalaTest.
 \end{itemize}
 }
 
 \frame{
 \frametitle{Data structures and parallelism}
 \begin{itemize}
-\item Scala has an extensive ``Collections framework" (\alert{\url{http://docs.scala-lang.org/overviews/collections/overview.html}}), providing a large range of data structures for almost any task (Array, List, Vector, Map, Range, Stream, Queue, Stack, ...)
+\item Scala has an extensive ``Collections framework" (\alert{\url{http://docs.Scala-lang.org/overviews/collections/overview.html}}), providing a large range of data structures for almost any task (Array, List, Vector, Map, Range, Stream, Queue, Stack, ...)
 \item Most collections available as either a \alert{mutable} or \alert{immutable} version --- idiomatic Scala code favours immutable collections
 \item Most collections have an associated \alert{parallel} version, providing concurrency and parallelism ``for free" (examples later)
 \end{itemize}
@@ -224,7 +225,7 @@ Dummies guide:
 \item \alert{Scalding} --- cascading workflow library (from Twitter)
 \item \alert{Storm} --- streaming analytics library (from Twitter)
 \item \alert{Scalaz} --- category theory types (functors, monads, etc.)
-\item \alert{Breeze} --- scientific and numerical library (including nonuniform random number generation and numerical linear algebra)
+\item \alert{Breeze} --- scientific and numerical library (including non-uniform random number generation and numerical linear algebra)
 \item \alert{Saddle} --- data library (data frames, etc.)
 \end{itemize}}
 Large ecosystem of software libraries and developers using Scala in the big data space...
@@ -233,10 +234,10 @@ Large ecosystem of software libraries and developers using Scala in the big data
 \frame{
 \frametitle{Breeze}
 \begin{itemize}
-\item Breeze is a scala library for scientific and numerical computing --- \alert{\url{https://github.com/scalanlp/breeze}}
+\item Breeze is a Scala library for scientific and numerical computing --- \alert{\url{https://github.com/scalanlp/breeze}}
 \item Includes all of the usual special functions, probability distributions, (non-uniform) random number generators, matrices, vectors, numerical linear algebra, optimisation, etc.
-\item For numerical linear algebra it provides a scala wrapper over \alert{\href{https://github.com/fommil/netlib-java}{netlib-java}}, which calls out to a native optimised BLAS/LAPACK if one can be found on the system (so, will run as fast as native code), or will fall back to a Java implementation if no native libraries can be found (so that code will always run)
-\item Blog post: \alert{\href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}}
+\item For numerical linear algebra it provides a Scala wrapper over \alert{\href{https://github.com/fommil/netlib-java}{netlib-java}}, which calls out to a native optimised BLAS/LAPACK if one can be found on the system (so, will run as fast as native code), or will fall back to a Java implementation if no native libraries can be found (so that code will always run)
+\item Blog post: \alert{\href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-Scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}}
 \end{itemize}
 }
 
@@ -252,12 +253,12 @@ Large ecosystem of software libraries and developers using Scala in the big data
 \item Integrate the standard normal PDF over $[-5,5]$ by simple uniform rejection sampling on the rectangle $[-5,5]\times[0,0.5]$.
 \item First import some objects into the namespace:
 \end{itemize}
-{\small
+{\scriptsize
 \begin{lstlisting}[language=java]
-import scala.math._
+import Scala.math._
 import breeze.stats.distributions.Uniform
 import breeze.linalg._
-import scala.annotation.tailrec
+import Scala.annotation.tailrec
 
 // R-like functions for Uniform random numbers
 def runif(l: Double,u: Double) = Uniform(l,u).sample
@@ -296,7 +297,8 @@ def mc2(its: Long): Long = {
     if (its == 0) acc else {
       val x = runif(-5.0,5.0)
       val y = runif(0.0,0.5)
-      if (y < f(x)) mc(its-1,acc+1) else mc(its-1,acc)
+      if (y < f(x)) mc(its-1,acc+1) else 
+                                  mc(its-1,acc)
     }  
   }
   mc(its,0)
@@ -369,7 +371,7 @@ Done
 {\small
 \begin{lstlisting}[language=java]
 import regression._
-import scala.math.log
+import Scala.math.log
 import org.saddle.io._
 import FrameUtils._
 
@@ -385,7 +387,7 @@ framePlot(getCol("Age", df), getCol("OI", df))
 \frametitle{Example: linear regression (3)}
 {\scriptsize
 \begin{lstlisting}[language=java]
-scala>  val df = CsvParser.parse(file).withColIndex(0)
+Scala>  val df = CsvParser.parse(file).withColIndex(0)
 df: org.saddle.Frame[Int,String,String] =
 [101 x 3]
          OI Age    Sex
@@ -402,7 +404,7 @@ df: org.saddle.Frame[Int,String,String] =
 100 -> 13.5  56   Male
 101 -> 16.1  66   Male
 
-scala> 
+Scala> 
 \end{lstlisting}
 }
 \end{frame}
@@ -444,7 +446,7 @@ println(sum)
 \frametitle{Example: linear regression (7)}
 {\scriptsize
 \begin{lstlisting}[language=java]
-scala> m.summary
+Scala> m.summary
 res6: regression.LmSummary =
 Residuals:
 [5 x 1]
@@ -469,7 +471,7 @@ Model statistics:
 Adjusted R-sq ->  0.2469
        F-stat -> 17.2265
 
-scala> 
+Scala> 
 \end{lstlisting}
 }
 \end{frame}
@@ -562,16 +564,16 @@ def genIters(s: State,current: Int,stop: Int,thin: Int): State = {
 \frame{
 \frametitle{Links and further reading}
 \begin{itemize}
-\item Scala: \alert{\url{http://www.scala-lang.org/}}
+\item Scala: \alert{\url{http://www.Scala-lang.org/}}
 \item Scala on wikipedia: \alert{\url{http://en.wikipedia.org/wiki/Scala_(programming_language)}}
 \item My blog: \alert{\url{http://darrenjw.wordpress.com/}}
   \begin{itemize}
-  \item \href{http://darrenjw.wordpress.com/2013/12/23/scala-as-a-platform-for-statistical-computing-and-data-science/}{Scala as a platform for statistical computing and data science}
-  \item \href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}
-  \item \href{http://darrenjw.wordpress.com/2013/10/04/a-functional-gibbs-sampler-in-scala/}{A functional Gibbs sampler in Scala}
-  \item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-scala/}{Parallel Monte Carlo using Scala}
+  \item \href{http://darrenjw.wordpress.com/2013/12/23/Scala-as-a-platform-for-statistical-computing-and-data-science/}{Scala as a platform for statistical computing and data science}
+  \item \href{http://darrenjw.wordpress.com/2013/12/30/brief-introduction-to-Scala-and-breeze-for-statistical-computing/}{Brief introduction to Scala and Breeze for statistical computing}
+  \item \href{http://darrenjw.wordpress.com/2013/10/04/a-functional-gibbs-sampler-in-Scala/}{A functional Gibbs sampler in Scala}
+  \item \href{http://darrenjw.wordpress.com/2014/02/23/parallel-monte-carlo-using-Scala/}{Parallel Monte Carlo using Scala}
   \end{itemize}
-\item This talk and code examples: \alert{\url{https://github.com/darrenjw/statslang-scala}} (also merged into \alert{\url{https://github.com/csgillespie/statslang}})
+\item This talk and code examples: \alert{\url{https://github.com/darrenjw/statslang-Scala}} (also merged into \alert{\url{https://github.com/csgillespie/statslang}})
 \end{itemize}
 
 }
