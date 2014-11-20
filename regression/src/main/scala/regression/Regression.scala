@@ -30,8 +30,8 @@ object Regression {
     println(m)
     m.plotResiduals.saveas("resid.png")
 
-    val sum = m.summary
-    println(sum)
+    val summ = m.summary
+    println(summ)
 
     // Interactive session ends here
     // ***********************************

@@ -28,8 +28,8 @@ class LmSummary(m: Lm) {
   val t = m.coefficients(::, 0) / se
   val tF = Frame(Vec(t.toArray), m.coeffFrame.rowIx, Index("t-val"))
   //val p=t.map{1.0-StudentsT(df).cdf(_)}.map{_*2} // .cdf missing... filed an issue - no incomplete beta function
-  //val p = t.map { 1.0 - Gaussian(0.0, 1.0).cdf(_) }.map { _ * 2 } // TODO: Gaussian approximate p-value for now... 
-  val p = t.map { 1.0 - tCDF(_, df) }.map { _ * 2 }
+  //val p = t.map { 1.0 - Gaussian(0.0, 1.0).cdf(_) }.map { _ * 2 } // Gaussian approximate p-value for now... 
+  val p = t.map { 1.0 - tCDF(_, df) }.map { _ * 2 } // sorted, until t cdf added to breeze
   val pF = Frame(Vec(p.toArray), m.coeffFrame.rowIx, Index("p-val"))
   val coeff = joinFrames(List(m.coeffFrame, seF, tF, pF))
   val ybar = mean(m.y(::, 0))
@@ -39,11 +39,12 @@ class LmSummary(m: Lm) {
   val adjRs = 1.0 - ((n - 1.0) / (n - pp)) * (1 - rSquared)
   val k = pp - 1
   val f = (ssy - rss) / k / (rss / df) // p-val is F on k and df under H0. No F in Breeze, and no incomplete beta function...
+  val pf = 1.0 - fCDF(f, k, df)
 
   override def toString = {
     "Residuals:\n" + five +
       "Coefficients:\n" + coeff +
-      "Model statistics:\n" + Series(Vec(rss, rse, df, rSquared, adjRs, f), Index("RSS", "RSE", "df", "R-squared", "Adjusted R-sq", "F-stat"))
+      "Model statistics:\n" + Series(Vec(rss, rse, df, rSquared, adjRs, f, pf), Index("RSS", "RSE", "df", "R-squared", "Adjusted R-sq", "F-stat", "p-value"))
   }
 
   def fiveNumber(v: DenseVector[Double]): Series[String, Double] = {
@@ -55,6 +56,11 @@ class LmSummary(m: Lm) {
   def tCDF(t: Double, df: Double): Double = {
     val xt = df / (t * t + df)
     1.0 - 0.5 * Beta.regularizedBeta(xt, 0.5 * df, 0.5)
+  }
+
+  def fCDF(x: Double, d1: Double, d2: Double): Double = {
+    val xt = x * d1 / (x * d1 + d2)
+    Beta.regularizedBeta(xt, 0.5 * d1, 0.5 * d2)
   }
 
 }
