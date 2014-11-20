@@ -42,9 +42,15 @@ object FrameUtils {
     sdf.col(colName)
   }
 
-  // TODO: Need to implement this properly!
-  def getColF[T, U](colName: String, sdf: Frame[T, String, U]): Frame[T, String, Double] = {
-    getColS(colName, sdf).mapValues(x => if (x == "Male") 1.0 else 0.0)
+  // TODO: Uses treatment contrasts - should allow sum contrasts, too, at least
+  def getColF(colName: String, sdf: Frame[Int, String, String]): Frame[Int, String, Double] = {
+    val sCol = getColS(colName, sdf)
+    val levels = sCol.colAt(0).toVec.contents.toList.groupBy(identity).mapValues(_.length).keys.toList.sorted
+    val dummies = levels.tail
+    val dummyLabels=dummies.map{colName+_}
+    val boolFrame = joinFrames(dummies.map { dl => sCol.mapValues(_ == dl) })
+    val modFrame=boolFrame.mapValues(x => if (x == true) 1.0 else 0.0)
+    Frame(modFrame.toMat,modFrame.rowIx,Index(dummyLabels.toArray))
   }
 
 }
