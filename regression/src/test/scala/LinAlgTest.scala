@@ -61,8 +61,9 @@ class LinAlgTest extends FunSuite {
     assert(approxeq(x(1, 1), 2.0))
   }
 
-  test("thinQR") {
+  test("thinQR - small matrix") {
     val a = DenseMatrix((1.0, 2.0), (3.0, 2.0), (3.0, 5.0))
+    val ac = a.copy
     val qr = m.thinQR(a)
     val q = qr._1
     val r = qr._2
@@ -83,6 +84,42 @@ class LinAlgTest extends FunSuite {
     assert(aa.cols === 2)
     val z = a - aa
     assert(approxeq(sum(abs(z)), 0.0))
+    val ad = a - ac
+    assert(approxeq(sum(abs(ad)), 0.0))
+  }
+
+  test("thinQR - large matrix") {
+    val a = DenseMatrix.rand(1000, 100)
+    val qr = m.thinQR(a)
+    val q = qr._1
+    val r = qr._2
+    assert(q.rows === 1000)
+    assert(q.cols === 100)
+    assert(r.rows === 100)
+    assert(r.cols === 100)
+    assert(approxeq(r(1, 0), 0.0))
+    val id = (q.t) * q
+    assert(id.rows === 100)
+    assert(id.cols === 100)
+    assert(approxeq(id(0, 0), 1.0))
+    assert(approxeq(id(0, 1), 0.0))
+    assert(approxeq(id(1, 0), 0.0))
+    assert(approxeq(id(1, 1), 1.0))
+    val aa = q * r
+    assert(aa.rows === 1000)
+    assert(aa.cols === 100)
+    val z = a - aa
+    assert(approxeq(sum(abs(z)), 0.0))
+  }
+
+  test("thinQR - cross check") {
+    val a = DenseMatrix.rand(1000, 100)
+    val qr = m.thinQR(a)
+    val qro = m.thinQRold(a)
+    val qd = qr._1 - qro._1
+    val rd = qr._2 - qro._2
+    assert(approxeq(sum(abs(qd)), 0.0))
+    assert(approxeq(sum(abs(rd)), 0.0))
   }
 
 }

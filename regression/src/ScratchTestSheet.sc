@@ -34,8 +34,8 @@ object ScratchTestSheet {
                                                   //| 
 
   val dm = frame2mat(frame.mapValues(CsvParser.parseDouble))
-                                                  //> Nov 20, 2014 8:59:09 PM com.github.fommil.jni.JniLoader liberalLoad
-                                                  //| INFO: successfully loaded /tmp/jniloader6004946347501313689netlib-native_sys
+                                                  //> Nov 21, 2014 2:04:03 PM com.github.fommil.jni.JniLoader liberalLoad
+                                                  //| INFO: successfully loaded /tmp/jniloader2561574790534812849netlib-native_sys
                                                   //| tem-linux-x86_64.so
                                                   //| dm  : breeze.linalg.DenseMatrix[Double] = 5.0    65.0   NaN  
                                                   //| 3.75   40.0   NaN  

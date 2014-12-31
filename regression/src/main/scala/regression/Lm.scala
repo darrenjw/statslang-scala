@@ -4,6 +4,8 @@ import breeze.linalg.{ DenseMatrix, DenseVector }
 import breeze.plot._
 import org.saddle._
 import com.github.fommil.netlib.BLAS.{ getInstance => blas }
+import com.github.fommil.netlib.LAPACK.{ getInstance => lapack }
+import org.netlib.util.intW
 import FrameUtils._
 
 class Lm(yf: Frame[Int, String, Double], X: ModelMatrix) {
@@ -36,8 +38,47 @@ class Lm(yf: Frame[Int, String, Double], X: ModelMatrix) {
     f
   }
 
-  // TODO: This is VERY inefficient for large n - need to replace with a proper thin QR by modifying qr() function definition
+  // thinQR based on "doQR" from the Breeze library
   def thinQR(A: DenseMatrix[Double]): (DenseMatrix[Double], DenseMatrix[Double]) = {
+    val m = A.rows
+    val n = A.cols
+    assert(m >= n) // want m >=n for thin QR
+    //Get optimal workspace size
+    val scratch, work = new Array[Double](1)
+    val info = new intW(0)
+    lapack.dgeqrf(m, n, scratch, m, scratch, work, -1, info)
+    val lwork1 = if (info.`val` != 0) n else work(0).toInt
+    lapack.dorgqr(m, n, scala.math.min(m, n), scratch, m, scratch, work, -1, info)
+    val lwork2 = if (info.`val` != 0) n else work(0).toInt
+    //allocate workspace mem. as max of lwork1 and lwork2
+    val workspace = new Array[Double](scala.math.max(lwork1, lwork2))
+    //Perform the QR factorization with dgeqrf
+    val maxd = scala.math.max(m, n)
+    val mind = scala.math.min(m, n)
+    val tau = new Array[Double](mind)
+    val outputMat = A.copy
+    lapack.dgeqrf(m, n, outputMat.data, m, tau, workspace, workspace.length, info)
+    //Error check
+    //if (info.`val` > 0)
+    // throw new NotConvergedException(NotConvergedException.Iterations)
+    //else if (info.`val` < 0)
+    // throw new IllegalArgumentException()
+    //Get R
+    val R = DenseMatrix.zeros[Double](n, n)
+    for (c <- 0 until maxd if (c < n); r <- 0 until m if (r <= c))
+      R(r, c) = outputMat(r, c)
+    //Get Q from the matrix returned by dgep3
+    lapack.dorgqr(m, n, scala.math.min(m, n), outputMat.data, m, tau, workspace, workspace.length, info)
+    //Error check
+    //if (info.`val` > 0)
+    // throw new NotConvergedException(NotConvergedException.Iterations)
+    //else if (info.`val` < 0)
+    // throw new IllegalArgumentException()
+    (outputMat, R)
+  }
+
+  // This is VERY inefficient for large n - but useful for testing
+  def thinQRold(A: DenseMatrix[Double]): (DenseMatrix[Double], DenseMatrix[Double]) = {
     import breeze.linalg
     val n = A.rows
     val p = A.cols
