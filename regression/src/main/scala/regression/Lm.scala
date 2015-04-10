@@ -38,43 +38,11 @@ class Lm(yf: Frame[Int, String, Double], X: ModelMatrix) {
     f
   }
 
-  // thinQR based on "doQR" from the Breeze library
+   // This requires breeze 0.11.2 or newer
   def thinQR(A: DenseMatrix[Double]): (DenseMatrix[Double], DenseMatrix[Double]) = {
-    val m = A.rows
-    val n = A.cols
-    assert(m >= n) // want m >=n for thin QR
-    //Get optimal workspace size
-    val scratch, work = new Array[Double](1)
-    val info = new intW(0)
-    lapack.dgeqrf(m, n, scratch, m, scratch, work, -1, info)
-    val lwork1 = if (info.`val` != 0) n else work(0).toInt
-    lapack.dorgqr(m, n, scala.math.min(m, n), scratch, m, scratch, work, -1, info)
-    val lwork2 = if (info.`val` != 0) n else work(0).toInt
-    //allocate workspace mem. as max of lwork1 and lwork2
-    val workspace = new Array[Double](scala.math.max(lwork1, lwork2))
-    //Perform the QR factorization with dgeqrf
-    val maxd = scala.math.max(m, n)
-    val mind = scala.math.min(m, n)
-    val tau = new Array[Double](mind)
-    val outputMat = A.copy
-    lapack.dgeqrf(m, n, outputMat.data, m, tau, workspace, workspace.length, info)
-    //Error check
-    //if (info.`val` > 0)
-    // throw new NotConvergedException(NotConvergedException.Iterations)
-    //else if (info.`val` < 0)
-    // throw new IllegalArgumentException()
-    //Get R
-    val R = DenseMatrix.zeros[Double](n, n)
-    for (c <- 0 until maxd if (c < n); r <- 0 until m if (r <= c))
-      R(r, c) = outputMat(r, c)
-    //Get Q from the matrix returned by dgep3
-    lapack.dorgqr(m, n, scala.math.min(m, n), outputMat.data, m, tau, workspace, workspace.length, info)
-    //Error check
-    //if (info.`val` > 0)
-    // throw new NotConvergedException(NotConvergedException.Iterations)
-    //else if (info.`val` < 0)
-    // throw new IllegalArgumentException()
-    (outputMat, R)
+    import breeze.linalg
+    val linalg.qr.QR(_Q, _R) = linalg.qr.reduced(A)
+    (_Q, _R)
   }
 
   // This is VERY inefficient for large n - but useful for testing

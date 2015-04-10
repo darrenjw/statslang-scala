@@ -121,7 +121,8 @@ class LinAlgTest extends FunSuite {
     assert(approxeq(sum(abs(qd)), 0.0))
     assert(approxeq(sum(abs(rd)), 0.0))
   }
-
+  
+  
 }
 
 
